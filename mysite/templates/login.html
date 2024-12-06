@@ -1,0 +1,26 @@
+{% extends "layout.html" %} <!-- Usamos la plantilla base -->
+
+{% block content %}
+
+<h1 class="text-center my-4">Iniciar Sesión</h1>
+
+<div class="container">
+    <form id="loginForm" action="/login" method="POST"> <!-- Cambiado a /login -->
+        <!-- Correo electrónico -->
+        <div class="mb-3">
+            <label for="correoLogin" class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" id="correoLogin" name="correo" required>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-3">
+            <label for="contraseñaLogin" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="contraseñaLogin" name="contraseña" required>
+        </div>
+
+        <!-- Botón de inicio de sesión -->
+        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+    </form>
+</div>
+
+{% endblock %}

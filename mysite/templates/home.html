@@ -1,0 +1,108 @@
+{% extends "layout.html" %} <!-- Declaro de dónde traigo la plantilla -->
+
+{% block content %}
+
+<!-- Carrusel -->
+<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="{{ url_for('static', filename='fotos/pantalla1.jpg') }}" class="d-block custom-carousel-img" alt="pantalla">
+        </div>
+        <div class="carousel-item">
+            <img src="{{ url_for('static', filename='fotos/niño.jpg') }}" class="d-block custom-carousel-img" alt="niño">
+        </div>
+        <div class="carousel-item">
+            <img src="{{ url_for('static', filename='fotos/setup2.jpg') }}" class="d-block custom-carousel-img" alt="setup">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<!-- Cursos -->
+<div class="row" id="card-deck"></div> <!-- Contenedor de las cards -->
+
+<script>
+    function obtenerDatos() {
+        fetch('https://cursos-1ffaa-default-rtdb.firebaseio.com/cursos.json') // Cambia la URL para obtener todos los cursos
+            .then(response => response.json())
+            .then(data => {
+                const cardDeck = document.getElementById('card-deck');
+                cardDeck.innerHTML = ''; // Limpiar contenido previo
+
+                // Limitar a 3 cursos
+                const cursos = Object.values(data).slice(0, 3); // Esto toma los primeros 3 cursos
+
+                // Iterar sobre los 3 primeros cursos y generar las tarjetas
+                Object.keys(data).slice(0, 3).forEach((key) => { // Iterar sobre las claves
+                    const curso = data[key];
+
+                    const card = document.createElement('div');
+                    card.classList.add('col-md-4', 'col-sm-6', 'col-12', 'mb-4'); // Diseño responsivo con Bootstrap
+
+                    const cardInner = document.createElement('div');
+                    cardInner.classList.add('card', 'h-100');
+
+                    const imagen = document.createElement('img');
+                    imagen.classList.add('card-img-top');
+                    imagen.src = curso.imagen || 'https://via.placeholder.com/300x200'; // Imagen por defecto
+
+                    const cardBody = document.createElement('div');
+                    cardBody.classList.add('card-body');
+
+                    const titulo = document.createElement('h5');
+                    titulo.classList.add('card-title');
+                    titulo.textContent = curso.nombrecurso;
+
+                    const duracion = document.createElement('p');
+                    duracion.classList.add('card-text');
+                    duracion.textContent = `Duración: ${curso.duracion} horas`;
+
+                    const valor = document.createElement('p');
+                    valor.classList.add('card-text');
+                    valor.textContent = `Valor: $${curso.valor}`;
+
+                    const botonDetalle = document.createElement('button');
+                    botonDetalle.classList.add('btn', 'btn-primary', 'mt-2');
+                    botonDetalle.textContent = 'Ver más';
+                    botonDetalle.addEventListener('click', function () {
+                        window.location.href = `/detalle_curso?id=${key}`; // Usamos 'key' correctamente aquí
+                    });
+
+                    // Ensamblar la tarjeta
+                    cardBody.appendChild(titulo);
+                    cardBody.appendChild(duracion);
+                    cardBody.appendChild(valor);
+                    cardBody.appendChild(botonDetalle);
+
+                    cardInner.appendChild(imagen);
+                    cardInner.appendChild(cardBody);
+                    card.appendChild(cardInner);
+                    cardDeck.appendChild(card);
+                });
+            })
+            .catch(error => console.error('Error al obtener los datos:', error));
+    }
+
+    // Cargar los datos al inicio y actualizar cada 20 segundos
+    obtenerDatos();
+    setInterval(obtenerDatos, 20000);
+</script>
+
+<!-- Banner -->
+<div class="banner">
+    <img src="{{ url_for('static', filename='fotos/setup.jpg') }}" alt="banner" class="img-fluid">
+    <div class="overlay"></div> <!-- Capa de opacidad -->
+    <div class="banner-text">
+        <p>¡Aprende a programar hoy mismo con <strong>DevFlix</strong>!</p>
+        <a href="/registro" class="banner-button btn btn-success">Regístrate gratis</a> <!-- Botón de registro -->
+    </div>
+</div>
+
+{% endblock %}

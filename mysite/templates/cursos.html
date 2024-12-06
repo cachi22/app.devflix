@@ -1,0 +1,81 @@
+{% extends "layout.html" %} <!-- Extender plantilla base -->
+
+{% block content %}
+
+<div class="container">
+    <div class="row" id="card-deck"></div>
+</div>
+
+<script>
+    function obtenerDatos() {
+        fetch('https://cursos-1ffaa-default-rtdb.firebaseio.com/cursos.json') // Cambia la URL para obtener todos los cursos
+            .then(response => response.json())
+            .then(data => {
+                const cardDeck = document.getElementById('card-deck');
+                cardDeck.innerHTML = ''; // Limpiar contenido previo
+
+                for (let key in data) {
+                    const objeto = data[key];
+
+                    // Crear estructura de tarjeta
+                    const card = document.createElement('div');
+                    card.classList.add('col-md-4', 'mb-4'); // Diseño responsivo con Bootstrap
+
+                    const cardInner = document.createElement('div');
+                    cardInner.classList.add('card', 'h-100');
+
+                    // Imagen del curso
+                    const imagen = document.createElement('img');
+                    imagen.classList.add('card-img-top');
+                    imagen.src = objeto.imagen || 'https://via.placeholder.com/300x200'; // Imagen por defecto
+
+                    const cardBody = document.createElement('div');
+                    cardBody.classList.add('card-body');
+
+                    // Título del curso
+                    const titulo = document.createElement('h5');
+                    titulo.classList.add('card-title');
+                    titulo.textContent = objeto.nombrecurso;
+
+                    // Duración del curso
+                    const duracion = document.createElement('p');
+                    duracion.classList.add('card-text');
+                    duracion.textContent = `Duración: ${objeto.duracion || 'N/A'} horas`;
+
+                    // Valor del curso
+                    const valor = document.createElement('p');
+                    valor.classList.add('card-text');
+                    valor.textContent = `Valor: $${objeto.valor || '0'}`;
+
+                    // Botón de detalles
+                    const botonDetalle = document.createElement('button');
+                    botonDetalle.classList.add('btn', 'btn-primary', 'mt-2');
+                    botonDetalle.textContent = 'Ver más';
+                    botonDetalle.addEventListener('click', function () {
+                        window.location.href = `/detalle_curso?id=${key}`; // Usamos la clave 'key' de Firebase como ID
+                    });
+
+                    // Ensamblar la tarjeta
+                    cardBody.appendChild(titulo);
+                    cardBody.appendChild(duracion);
+                    cardBody.appendChild(valor);
+                    cardBody.appendChild(botonDetalle);
+
+                    cardInner.appendChild(imagen);
+                    cardInner.appendChild(cardBody);
+                    card.appendChild(cardInner);
+                    cardDeck.appendChild(card);
+                }
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error);
+                document.getElementById('card-deck').innerHTML = '<p class="text-danger">Hubo un error al cargar los cursos. Intenta nuevamente más tarde.</p>';
+            });
+    }
+
+    // Cargar datos al inicio y actualizar cada 20 segundos
+    obtenerDatos();
+    setInterval(obtenerDatos, 20000);
+</script>
+
+{% endblock %}

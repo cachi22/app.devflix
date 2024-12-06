@@ -1,0 +1,70 @@
+{% extends "layout.html" %} <!-- Usamos la plantilla base -->
+
+{% block content %}
+<h1 class="text-center my-4">Noticias</h1>
+
+<div id="noticias-container" class="container">
+    <!-- Aquí se mostrarán las noticias -->
+</div>
+
+<script>
+    // Función para obtener las noticias de la API
+    function obtenerNoticias() {
+        // URL de la API (aquí puedes usar cualquier API que te proporcione noticias)
+        const apiUrl = 'https://newsapi.org/v2/top-headlines?country=us&apiKey=4bcf0a6652d84096b5c10133a7b5f0a4';
+
+        // Usamos fetch para consumir la API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const noticiasContainer = document.getElementById('noticias-container');
+                noticiasContainer.innerHTML = ''; // Limpiar contenido previo
+
+                // Iterar sobre las noticias y crear los elementos
+                data.articles.forEach(noticia => {
+                    const noticiaDiv = document.createElement('div');
+                    noticiaDiv.classList.add('card', 'mb-4');
+
+                    // Título de la noticia
+                    const titulo = document.createElement('h5');
+                    titulo.classList.add('card-header');
+                    titulo.textContent = noticia.title;
+
+                    // Contenido de la noticia
+                    const contenido = document.createElement('p');
+                    contenido.classList.add('card-body');
+                    contenido.textContent = noticia.description || 'Descripción no disponible';
+
+                    // Imagen de la noticia
+                    const imagen = document.createElement('img');
+                    imagen.classList.add('card-img-top');
+                    imagen.src = noticia.urlToImage || 'https://via.placeholder.com/300'; // Imagen por defecto
+
+                    // Enlace para leer más
+                    const enlace = document.createElement('a');
+                    enlace.classList.add('btn', 'btn-primary');
+                    enlace.href = noticia.url;
+                    enlace.textContent = 'Leer más';
+                    enlace.target = '_blank'; // Abrir en nueva pestaña
+
+                    // Ensamblar la noticia
+                    noticiaDiv.appendChild(imagen);
+                    noticiaDiv.appendChild(titulo);
+                    noticiaDiv.appendChild(contenido);
+                    noticiaDiv.appendChild(enlace);
+
+                    // Agregar la noticia al contenedor
+                    noticiasContainer.appendChild(noticiaDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener las noticias:', error);
+                document.getElementById('noticias-container').innerHTML = '<p class="text-danger">No se pudieron cargar las noticias. Intenta más tarde.</p>';
+            });
+    }
+
+    // Cargar las noticias al cargar la página
+    obtenerNoticias();
+</script>
+
+{% endblock %}

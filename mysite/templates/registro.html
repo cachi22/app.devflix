@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="text-center my-4">Formulario de Registro</h1>
+
+<div class="container">
+    <form action="/registro" method="POST">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre Completo</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="correo" class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" id="correo" name="correo" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="contraseña" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="confirmarContraseña" class="form-label">Confirmar Contraseña</label>
+            <input type="password" class="form-control" id="confirmarContraseña" name="confirmarContraseña" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Registrarse</button>
+    </form>
+</div>
+
+{% endblock %}

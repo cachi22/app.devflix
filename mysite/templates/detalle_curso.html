@@ -1,0 +1,65 @@
+{% extends "layout.html" %} <!-- Declaro de dónde traigo la plantilla -->
+
+{% block content %}
+
+<h1 class="text-center my-4">Detalle del Curso</h1>
+
+<div id="descripcion-container" class="container my-4"></div>
+
+<script>
+    // Obtener el parámetro 'id' de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const cursoId = urlParams.get('id');
+
+    if (!cursoId) {
+        // Mostrar un mensaje de error si el ID no está presente
+        document.getElementById('descripcion-container').innerHTML = '<p class="text-danger">Error: No se proporcionó un ID de curso válido.</p>';
+    } else {
+        // Realizar la solicitud a la API para obtener el curso
+        fetch(`https://cursos-1ffaa-default-rtdb.firebaseio.com/cursos/${cursoId}.json`)  // URL corregida
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los datos del curso.');
+                }
+                return response.json();
+            })
+            .then(curso => {
+                if (!curso) {
+                    throw new Error('El curso no existe o los datos están incompletos.');
+                }
+
+                const descripcionContainer = document.getElementById('descripcion-container');
+
+                // Crear elementos HTML para mostrar los detalles del curso
+                const nombre = document.createElement('h2');
+                nombre.classList.add('text-primary', 'text-center');
+                nombre.textContent = curso.nombrecurso;
+
+                const duracion = document.createElement('p');
+                duracion.textContent = `Duración: ${curso.duracion}`;
+
+                const valor = document.createElement('p');
+                valor.textContent = `Valor: $${curso.valor}`;
+
+                const imagen = document.createElement('img');
+                imagen.src = curso.imagen || 'https://via.placeholder.com/400x200';
+                imagen.alt = curso.nombrecurso;
+                imagen.classList.add('img-fluid', 'my-3', 'mx-auto', 'd-block');
+
+                const descripcion = document.createElement('p'); // Corregido para mostrar la descripción del curso
+                descripcion.textContent = `Descripción: ${curso.descripcion}`;
+
+                descripcionContainer.appendChild(nombre);
+                descripcionContainer.appendChild(duracion);
+                descripcionContainer.appendChild(valor);
+                descripcionContainer.appendChild(imagen);
+                descripcionContainer.appendChild(descripcion);
+            })
+            .catch(error => {
+                // Mostrar un mensaje de error si algo falla
+                document.getElementById('descripcion-container').innerHTML = `<p class="text-danger">${error.message}</p>`;
+            });
+    }
+</script>
+
+{% endblock %}
